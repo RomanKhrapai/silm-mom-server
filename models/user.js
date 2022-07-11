@@ -26,17 +26,27 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    products: {
+      type: Schema.Types.ObjectId,
+      ref: "product",
+    },
   },
   { versionKey: false, timestamps: true }
 );
 
 const joiRegisterSchema = Joi.object({
-  name: Joi.string().required().min(3).max(254).error(new Error("missing required name field")),
+  name: Joi.string()
+    .required()
+    .min(3)
+    .max(254)
+    .error(new Error("missing required name field")),
   email: Joi.string()
     .required()
     .error(new Error("missing required email field")),
   password: Joi.string()
-    .required().min(8).max(100)
+    .required()
+    .min(8)
+    .max(100)
     .error(new Error("missing required password field")),
 });
 
@@ -45,7 +55,9 @@ const joiLoginSchema = Joi.object({
     .required()
     .error(new Error("missing required email field")),
   password: Joi.string()
-    .required().min(8).max(100)
+    .required()
+    .min(8)
+    .max(100)
     .error(new Error("missing required password field")),
 });
 

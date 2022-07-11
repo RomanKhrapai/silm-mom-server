@@ -3,11 +3,14 @@ const Joi = require("joi");
 
 const productSchema = Schema(
   {
+    
     _id: {
-      type: { String },
+      $oid: {
+        type: String,
+      },
     },
     categories: {
-      type: [String],
+      type: { String },
     },
     weight: {
       type: Number,
@@ -38,7 +41,7 @@ const Product = model("product", productSchema);
 
 const joiSchema = Joi.object({
   _id: Joi.string(),
-  categories: Joi.array(),
+  categories: Joi.object(),
   weight: Joi.number(),
   title: Joi.object(),
   calories: Joi.number(),
