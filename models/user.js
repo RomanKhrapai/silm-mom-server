@@ -34,7 +34,7 @@ const userSchema = Schema(
       enum: [1, 2, 3, 4],
       default: 1,
     },
-    token: {
+    refreshToken: {
       type: String,
       default: null,
     },

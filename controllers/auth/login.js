@@ -2,8 +2,7 @@ const { User } = require("../../models");
 const { Unauthorized } = require("http-errors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const { SECRET_KEY } = process.env;
+const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -15,13 +14,29 @@ const login = async (req, res) => {
     throw new Unauthorized("Email or password is wrong");
   }
 
-  const payload = {
+  const payloadAccess = {
     id: user._id,
+    type: "access",
   };
-  const token = jwt.sign(payload, SECRET_KEY, {expiresIn: "1h"});
-  await User.findByIdAndUpdate(user._id, { token });
+
+  const payloadRefresh = {
+    id: user._id,
+    type: "refresh",
+  };
+
+  const accessToken = jwt.sign(payloadAccess, ACCESS_SECRET_KEY, {
+    expiresIn: "1m",
+  });
+
+  const refreshToken = jwt.sign(payloadRefresh, REFRESH_SECRET_KEY, {
+    expiresIn: "1d",
+  });
+  
+
+  await User.findByIdAndUpdate(user._id, { refreshToken });
   res.json({
-    token,
+    refreshToken,
+    accessToken,
     user: {
       email,
     },
