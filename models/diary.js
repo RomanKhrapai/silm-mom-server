@@ -1,26 +1,23 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 
-const diarySchema = Schema(
-  {
-    date: {
-      type: Date,
-      default: Date.now(),
-    },
-
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
-      required: true,
-    },
-
-    amount: {
-      type: Number,
-      required: true,
-    },
+const diarySchema = Schema({
+  date: {
+    type: Date,
+    default: Date.now(),
   },
-  { versionKey: false, timestamps: true }
-);
+
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+
+  amount: {
+    type: Number,
+    required: true,
+  },
+});
 
 const Diary = model("diary", diarySchema);
 
