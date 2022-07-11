@@ -38,6 +38,10 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    products: {
+      type: Schema.Types.ObjectId,
+      ref: "product",
+    },
   },
   { versionKey: false, timestamps: true }
 );
