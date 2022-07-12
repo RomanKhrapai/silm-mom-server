@@ -3,7 +3,6 @@ const Joi = require("joi");
 
 const productSchema = Schema(
   {
-    
     _id: {
       $oid: {
         type: String,
