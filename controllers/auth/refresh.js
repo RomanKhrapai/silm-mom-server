@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { User } = require("../../models");
 const { BadRequest } = require("http-errors");
+const { generateAccessToken, generateRefreshToken } = require("../../helpers")
 
-const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
+const { REFRESH_SECRET_KEY } = process.env;
 
 const refresh = async (req, res, next) => {
   const token  = req.body.refreshToken;
@@ -14,23 +15,10 @@ const refresh = async (req, res, next) => {
       throw new BadRequest("Invalid token");
     }
 
-    const payloadAccess = {
-      id: user._id,
-      type: "access",
-    };
+    const accessToken = generateAccessToken(user._id);
 
-    const payloadRefresh = {
-      id: user._id,
-      type: "refresh",
-    };
-
-    const accessToken = jwt.sign(payloadAccess, ACCESS_SECRET_KEY, {
-      expiresIn: "10h",
-    });
-
-    const refreshToken = jwt.sign(payloadRefresh, REFRESH_SECRET_KEY, {
-      expiresIn: "1d",
-    });
+    const refreshToken = generateRefreshToken(user._id);
+    
     await User.findByIdAndUpdate(user._id, { refreshToken });
     res.json({
       refreshToken,

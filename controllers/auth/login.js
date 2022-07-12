@@ -1,8 +1,7 @@
 const { User } = require("../../models");
 const { Unauthorized } = require("http-errors");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
+const { generateAccessToken, generateRefreshToken } = require("../../helpers");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -14,23 +13,9 @@ const login = async (req, res) => {
     throw new Unauthorized("Email or password is wrong");
   }
 
-  const payloadAccess = {
-    id: user._id,
-    type: "access",
-  };
+  const accessToken = generateAccessToken(user._id);
 
-  const payloadRefresh = {
-    id: user._id,
-    type: "refresh",
-  };
-
-  const accessToken = jwt.sign(payloadAccess, ACCESS_SECRET_KEY, {
-    expiresIn: "10h",
-  });
-
-  const refreshToken = jwt.sign(payloadRefresh, REFRESH_SECRET_KEY, {
-    expiresIn: "1d",
-  });
+  const refreshToken = generateRefreshToken(user._id);
   
 
   await User.findByIdAndUpdate(user._id, { refreshToken });
