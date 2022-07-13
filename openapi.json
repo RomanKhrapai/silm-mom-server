@@ -24,7 +24,7 @@
   ],
   "paths": {
     "/auth/login": {
-      "get": {
+      "post": {
         "summary": "a route to login a registered user and generate a pair of refresh/access tokens",
         "tags": ["Authentication"]
       }
@@ -36,14 +36,14 @@
       }
     },
     "/auth/logout": {
-      "post": {
+      "get": {
         "summary": "a route to logout a user, followed by dropping an existing refresh token",
         "tags": ["Authentication"]
       }
     },
     "/auth/refresh-token": {
       "post": {
-        "summary": "a route to refresh an acess token for a logined user",
+        "summary": "a route to refresh an access token for a logined user",
         "tags": ["Authentication"]
       }
     },
@@ -59,7 +59,7 @@
     },
     "/products": {
       "get": {
-        "summary": "a route for getting a product info by a quuery",
+        "summary": "a route for getting a product info by a query",
         "tags": ["Products"]
       },
       "post": {
