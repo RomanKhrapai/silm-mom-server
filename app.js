@@ -5,6 +5,7 @@ require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
 
 const authRouter = require("./routes/api/auth");
+const usersRouter = require("./routes/api/users");
 const productsRouter = require("./routes/api/products");
 const diaryRouter = require("./routes/api/diaries");
 
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/diary", diaryRouter);
 app.use(
