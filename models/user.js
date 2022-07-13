@@ -74,6 +74,39 @@ const joiLoginSchema = Joi.object({
     .error(new Error("missing required password field")),
 });
 
+const joiDietSchema = Joi.object({
+  height: Joi.number()
+    .required()
+    .integer()
+    .min(100)
+    .max(250)
+    .error(new Error("Height is required")),
+  age: Joi.number()
+    .required()
+    .integer()
+    .min(18)
+    .max(100)
+    .error(new Error("Age is required")),
+  currentWeight: Joi.number()
+    .required()
+    .integer()
+    .min(20)
+    .max(500)
+    .error(new Error("Current weight is required")),
+  desiredWeight: Joi.number()
+    .required()
+    .integer()
+    .min(20)
+    .max(500)
+    .error(new Error("Desired weight is required")),
+  bloodType: Joi.number()
+    .required()
+    .integer()
+    .min(1)
+    .max(4)
+    .error(new Error("Blood type is required")),
+});
+
 const User = model("user", userSchema);
 
-module.exports = { User, joiRegisterSchema, joiLoginSchema };
+module.exports = { User, joiRegisterSchema, joiLoginSchema, joiDietSchema };
