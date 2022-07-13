@@ -15,8 +15,8 @@ const {
 const { validation, auth, ctrlWrapper } = require("../../middlewares");
 
 router.post("/register", validation(joiRegisterSchema), ctrlWrapper(register));
-router.get("/login", validation(joiLoginSchema), ctrlWrapper(login));
+router.post("/login", validation(joiLoginSchema), ctrlWrapper(login));
 router.post("/refresh-token", refresh);
-router.post("/logout", auth, ctrlWrapper(logout));
+router.get("/logout", auth, ctrlWrapper(logout));
 
 module.exports = router;
