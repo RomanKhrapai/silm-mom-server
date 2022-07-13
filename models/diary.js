@@ -3,7 +3,7 @@ const Joi = require("joi");
 
 const diarySchema = Schema({
   date: {
-    type: Date,
+    type: String,
     default: Date.now(),
   },
 
@@ -22,8 +22,7 @@ const diarySchema = Schema({
 const Diary = model("diary", diarySchema);
 
 const joiSchema = Joi.object({
-  date: Joi.date(),
-
+  date: Joi.string(),
   amount: Joi.number(),
 });
 

@@ -20,4 +20,11 @@ router.get(
   ctrlWrapper(ctrl.getDiaryProductsList)
 );
 
+router.delete(
+  "/:id",
+  auth,
+  validation(joiSchema),
+  ctrlWrapper(ctrl.diaryDeleteProduct)
+);
+
 module.exports = router;
