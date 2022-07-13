@@ -8,13 +8,11 @@ const diaryAddProduct = async (req, res) => {
     user: userId,
   });
 
-  console.log(doc);
-
   const product = await doc.save();
   res.json(product);
 
   if (!doc) {
-    return res.status(400).json({ message: "missing required name field" });
+    return res.status(400).json({ message: "missing required field" });
   }
 
   res.status(201).json({
