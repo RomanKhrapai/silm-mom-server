@@ -2,7 +2,7 @@ const { Product } = require("../../models");
 
 const listProductsByQuery = async (req, res) => {
   const queryParameter = req.query.title;
-  console.log(queryParameter);
+  
   const result = await Product.find(
     {
       "title.ua": {

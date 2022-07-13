@@ -28,9 +28,9 @@ const productSchema = Schema(
     groupBloodNotAllowed: {
       type: [Boolean],
     },
-    __v: {
-      type: Number,
-      default: 0,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
     },
   },
   { versionKey: false, timestamps: true }
@@ -45,7 +45,6 @@ const joiSchema = Joi.object({
   title: Joi.object(),
   calories: Joi.number(),
   groupBloodNotAllowed: Joi.array(),
-  __v: Joi.any(),
 });
 
 module.exports = {
