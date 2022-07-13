@@ -8,7 +8,12 @@ const router = express.Router();
 
 router.post("/", validation(joiSchema), ctrlWrapper(ctrl.addProduct));
 
-router.get("/", validation(joiSchema), ctrlWrapper(ctrl.listProductsByQuery));
+router.get(
+  "/",
+  auth,
+  validation(joiSchema),
+  ctrlWrapper(ctrl.listProductsByQuery)
+);
 
 router.get(
   "/categories",
