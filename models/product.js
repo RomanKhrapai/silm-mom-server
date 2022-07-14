@@ -15,7 +15,7 @@ const productSchema = Schema(
       type: Number,
     },
     title: {
-      ru: {
+      en: {
         type: String,
       },
       ua: {

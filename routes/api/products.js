@@ -15,10 +15,4 @@ router.get(
   ctrlWrapper(ctrl.listProductsByQuery)
 );
 
-router.get(
-  "/categories",
-  validation(joiSchema),
-  ctrlWrapper(ctrl.publicListProductsNotRecommended)
-);
-
 module.exports = router;
