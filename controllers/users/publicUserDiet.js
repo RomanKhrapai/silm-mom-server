@@ -1,28 +1,38 @@
 const { Product } = require("../../models");
 
 const publicUserDiet = async (req, res) => {
-  const { height, age, currentWeight, desiredWeight, bloodType} = req.body;
+  const {
+    height,
+    age,
+    currentWeight,
+    desiredWeight,
+    bloodType,
+    language = "ua",
+  } = req.body;
 
-
-  const dailyCalorieIntake =
+  const calculationDailyCalorieIntake =
     10 * currentWeight +
     6.25 * height -
     5 * age -
     161 -
     10 * (currentWeight - desiredWeight);
 
-  const language = "ua";
+  const dailyCalorieIntake = Math.round(calculationDailyCalorieIntake);  
+
   const options = `categories.${language}`;
 
-  const f = `groupBloodNotAllowed.${bloodType}`;
- 
-  const results = await Product.find({ [f]: true }, options);
+  const resultFind = await Product.find(
+    { [`groupBloodNotAllowed.${bloodType}`]: true },
+    options
+  );
 
- const json = JSON.parse(JSON.stringify(results));;
+  const transformationResult = JSON.parse(JSON.stringify(resultFind));
 
- const resultMap = json.map((item) => item.categories[language]);
+  const resultMap = transformationResult.map(
+    (item) => item.categories[language]
+  );
 
- const productsNotRecommended = [...new Set(resultMap)];
+  const productsNotRecommended = [...new Set(resultMap)];
 
   res.json({
     user: {

@@ -3,12 +3,35 @@ const { User } = require("../../models");
 const { NotFound } = require("http-errors");
 
 const privateUserDiet = async (req, res) => {
-  const { height, age, currentWeight, desiredWeight, bloodType } = req.body;
+  const {
+    height,
+    age,
+    currentWeight,
+    desiredWeight,
+    bloodType,
+    language = "ua",
+  } = req.body;
   const { _id } = req.user;
+
+  const calculationDailyCalorieIntake =
+    10 * currentWeight +
+    6.25 * height -
+    5 * age -
+    161 -
+    10 * (currentWeight - desiredWeight);
+
+  const dailyCalorieIntake = Math.round(calculationDailyCalorieIntake);  
 
   const user = await User.findByIdAndUpdate(
     _id,
-    { height, age, currentWeight, desiredWeight, bloodType },
+    {
+      height,
+      age,
+      currentWeight,
+      desiredWeight,
+      bloodType,
+      dailyCalorieIntake,
+    },
     {
       new: true,
     }
@@ -18,23 +41,26 @@ const privateUserDiet = async (req, res) => {
     throw new NotFound("Not found");
   }
 
-  const dailyCalorieIntake =
-    10 * currentWeight +
-    6.25 * height -
-    5 * age -
-    161 -
-    10 * (currentWeight - desiredWeight);
+  const options = `categories.${language}`;
 
-  const results = await Product.find({ groupBloodNotAllowed: true });
-
-  const notRecommendedProductsArray = results.filter(
-    (result) => result.groupBloodNotAllowed[`${bloodType}`] === true
+  const resultFind = await Product.find(
+    { [`groupBloodNotAllowed.${bloodType}`]: true },
+    options
   );
 
+  const transformationResult = JSON.parse(JSON.stringify(resultFind));
+
+  const resultMap = transformationResult.map(
+    (item) => item.categories[language]
+  );
+
+  const productsNotRecommended = [...new Set(resultMap)];
+
   res.json({
-    user: {
+    data: {
+      userId: _id,
       dailyCalorieIntake,
-      notRecommendedProductsArray,
+      productsNotRecommended,
     },
   });
 };

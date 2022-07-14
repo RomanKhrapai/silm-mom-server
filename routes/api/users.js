@@ -6,7 +6,7 @@ const { joiDietSchema } = require("../../models/user");
 const { validation, auth, ctrlWrapper } = require("../../middlewares");
 const { publicUserDiet, privateUserDiet } = require("../../controllers/users");
 
-router.get(
+router.post(
   "/public/daily-calorie-intake",
   validation(joiDietSchema),
   ctrlWrapper(publicUserDiet)

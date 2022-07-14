@@ -105,6 +105,7 @@ const joiDietSchema = Joi.object({
     .min(1)
     .max(4)
     .error(new Error("Blood type is required")),
+  language: Joi.string().valid("ua", "en"),
 });
 
 const User = model("user", userSchema);
