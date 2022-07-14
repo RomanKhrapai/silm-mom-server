@@ -9,12 +9,8 @@ const listProductsByQuery = async (req, res) => {
         $regex: queryParameter,
         $options: "i",
       },
-      "title.en": {
-        $regex: queryParameter,
-        $options: "i",
-      },
     },
-    "_id title.ua title.en calories"
+    "_id title calories"
   ).exec();
   res.json({
     status: "success",

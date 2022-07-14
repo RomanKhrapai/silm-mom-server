@@ -14,7 +14,7 @@ router.post(
 );
 
 router.get(
-  "/",
+  "/:date",
   auth,
   validation(joiSchema),
   ctrlWrapper(ctrl.getDiaryProductsList)
