@@ -9,7 +9,6 @@ const diaryDeleteProduct = async (req, res) => {
     },
     (err, doc) => {
       if (err) {
-        console.log(err);
         return res.status(500).json({
           message: "Failed to remove product",
         });
