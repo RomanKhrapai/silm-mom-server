@@ -1,34 +1,32 @@
 const { Diary } = require("../../models");
 
 const diaryDeleteProduct = async (req, res) => {
-  const productId = req.params.id;
+    const productId = req.params.id;
+    const user = req.user._id;
 
-  Diary.findOneAndDelete(
-    {
-      _id: productId,
-    },
-    (err, doc) => {
-      if (err) {
-        return res.status(500).json({
-          message: "Failed to remove product",
-        });
-      }
-
-      if (!doc) {
+    const data = await Diary.findByIdAndRemove(productId);
+    if (!data) {
         return res.status(404).json({
-          message: "Product not found",
+            message: "Date not found",
         });
-      }
+    }
 
-      res.json({
+    const result = await Diary.find({
+        date: data.date,
+        user,
+    }).populate("productId", "title calories");
+
+    if (!result) {
+        return res.status(404).json({
+            message: "Date not found",
+        });
+    }
+
+    res.json({
         status: "success",
         code: 200,
-        data: {
-          doc,
-        },
-      });
-    }
-  );
+        data: result,
+    });
 };
 
 module.exports = diaryDeleteProduct;
