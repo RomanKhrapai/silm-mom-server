@@ -12,11 +12,9 @@ const googleAuth = async (req, res) => {
         access_type: "offline",
         prompt: "consent",
     });
-    const link = `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`;
     return res.redirect(
         `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
     );
-    // return res.status(200).json({ message: link });
 };
 
 module.exports = googleAuth;
