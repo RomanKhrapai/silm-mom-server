@@ -31,10 +31,10 @@ const userSchema = Schema(
         desiredWeight: { type: Number, min: 20, max: 500, default: null },
         bloodType: {
             type: Number,
-            enum: [1, 2, 3, 4],
+            enum: [1, 2, 3, 4, null],
             default: null,
         },
-        language: { type: String, enum: ["ua", "en"], default: null },
+        language: { type: String, enum: ["ua", "en", null], default: null },
         dailyCalorieIntake: { type: Number, min: 0, default: null },
         refreshToken: {
             type: String,
