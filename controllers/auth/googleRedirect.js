@@ -28,11 +28,26 @@ const googleRedirect = async (req, res) => {
             Authorization: `Bearer ${tokenData.data.access_token}`,
         },
     });
+    const { email, name, given_name, picture, locale } = userData.data;
+    let user = await User.findOne({ email });
+    //  User.findOneAndDelete({ _id: user._id }, (err, doc) => {});
+    if (!user) {
+        user = await User.create({
+            name: given_name,
+            email,
+            password: "hashPassword",
+            language: locale === "ua" ? "ua" : "en",
+        });
+    }
 
-    console.log(userData.data);
-    console.log(process.env.FRONTEND_URL);
+    const accessToken = generateAccessToken(user._id);
+
+    const refreshToken = generateRefreshToken(user._id);
+
+    await User.findByIdAndUpdate(user._id, { refreshToken });
+
     return res.redirect(
-        `${process.env.FRONTEND_URL}?email=${userData?.data.email}`
+        `${process.env.FRONTEND_URL}? refreshToken=${refreshToken}&accessToken=${accessToken},`
     );
 };
 
