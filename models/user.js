@@ -34,7 +34,7 @@ const userSchema = Schema(
             enum: [1, 2, 3, 4, null],
             default: null,
         },
-        language: { type: String, enum: ["ua", "en", null], default: null },
+        language: { type: String, enum: ["ua", "en"], default: "ua" },
         dailyCalorieIntake: { type: Number, min: 0, default: null },
         refreshToken: {
             type: String,
