@@ -48,6 +48,7 @@ const login = async (req, res) => {
                 createdAt,
             },
         },
+      },
     });
 };
 

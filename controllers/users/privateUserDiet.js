@@ -20,7 +20,7 @@ const privateUserDiet = async (req, res) => {
     161 -
     10 * (currentWeight - desiredWeight);
 
-  const dailyCalorieIntake = Math.round(calculationDailyCalorieIntake);  
+  const dailyCalorieIntake = Math.round(calculationDailyCalorieIntake);
 
   const user = await User.findByIdAndUpdate(
     _id,
