@@ -3,6 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 
 const authRouter = require("./routes/api/auth");
 const productsRouter = require("./routes/api/products");
@@ -22,7 +23,7 @@ app.use("/api/diary", diaryRouter);
 app.use(
   "/api/docs",
   swaggerUi.serve,
-  swaggerUi.setup(require("./openapi.json"))
+  swaggerUi.setup(YAML.load("./openapi.yaml"))
 );
 
 app.use((req, res) => {
