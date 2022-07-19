@@ -1,20 +1,18 @@
 const { Diary } = require("../../models");
 
-const diaryAddProduct = async (req, res) => {
+const diaryDeleteProduct = async (req, res) => {
+    const productId = req.params.id;
     const user = req.user._id;
 
-    const doc = new Diary({
-        ...req.body,
-        user,
-    });
-    const product = await doc.save();
-
-    if (!doc) {
-        return res.status(400).json({ message: "missing required field" });
+    const data = await Diary.findByIdAndRemove(productId);
+    if (!data) {
+        return res.status(404).json({
+            message: "Date not found",
+        });
     }
 
     const result = await Diary.find({
-        date: req.body.date,
+        date: data.date,
         user,
     }).populate("productId", "title calories");
 
@@ -24,11 +22,11 @@ const diaryAddProduct = async (req, res) => {
         });
     }
 
-    res.status(201).json({
+    res.json({
         status: "success",
-        code: 201,
+        code: 200,
         data: result,
     });
 };
 
-module.exports = diaryAddProduct;
+module.exports = diaryDeleteProduct;

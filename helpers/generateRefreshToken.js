@@ -8,7 +8,7 @@ const generateRefreshToken = (id) => {
   };
 
   return jwt.sign(payloadRefresh, REFRESH_SECRET_KEY, {
-    expiresIn: "1d",
+    expiresIn: "3m",
   });
 };
 

@@ -13,11 +13,8 @@ router.post(
   ctrlWrapper(ctrl.diaryAddProduct)
 );
 
-router.get(
-  "/",
-  auth,
-  validation(joiSchema),
-  ctrlWrapper(ctrl.getDiaryProductsList)
-);
+router.get("/:date", auth, ctrlWrapper(ctrl.getDiaryProductsList));
+
+router.delete("/:id", auth, ctrlWrapper(ctrl.diaryDeleteProduct));
 
 module.exports = router;

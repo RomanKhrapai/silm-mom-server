@@ -6,6 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 
 const authRouter = require("./routes/api/auth");
+const usersRouter = require("./routes/api/users");
 const productsRouter = require("./routes/api/products");
 const diaryRouter = require("./routes/api/diaries");
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/diary", diaryRouter);
 app.use(
@@ -31,7 +33,8 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message });
+  const { status = 500, message = "Server error" } = err;
+  res.status(status).json({ message });
 });
 
 module.exports = app;

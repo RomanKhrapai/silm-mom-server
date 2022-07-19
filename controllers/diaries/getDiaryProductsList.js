@@ -1,20 +1,24 @@
 const { Diary } = require("../../models");
 
 const getDiaryProductsList = async (req, res) => {
-  const { _id } = req.user;
+  const { date } = req.params;
+  const user = req.user._id;
 
-  const result = await Diary.find({ user: _id }).populate(
-    "user",
-    "_id products"
-  );
+  const result = await Diary.find({
+    date,
+    user,
+  }).populate("productId", "title calories");
+  
+  if (!result) {
+    return res.status(404).json({
+      message: "Date not found",
+    });
+  }
 
-  console.log(result);
   res.json({
     status: "success",
     code: 200,
-    data: {
-      result,
-    },
+    data: result,
   });
 };
 

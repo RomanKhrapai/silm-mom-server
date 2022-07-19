@@ -3,10 +3,14 @@ const Joi = require("joi");
 
 const diarySchema = Schema({
   date: {
-    type: Date,
-    default: Date.now(),
+    type: String,
+    required: true,
   },
-
+  productId: {
+    type: Schema.Types.ObjectId,
+    ref: "product",
+    required: true,
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: "user",
@@ -22,9 +26,9 @@ const diarySchema = Schema({
 const Diary = model("diary", diarySchema);
 
 const joiSchema = Joi.object({
-  date: Joi.date(),
-
-  amount: Joi.number(),
+  date: Joi.string().required(),
+  productId: Joi.string().required(),
+  amount: Joi.number().required(),
 });
 
 module.exports = {

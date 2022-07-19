@@ -1,17 +1,21 @@
 const { Product } = require("../../models");
 
 const listProductsByQuery = async (req, res) => {
-  const queryParameter = req.query.title;
-  console.log(queryParameter);
+  const queryParameter = req.query.title.trim();
+
+  const titleLanguage =
+    queryParameter.charCodeAt(0) > 1000 ? "title.ua" : "title.en";
+
   const result = await Product.find(
     {
-      "title.ua": {
+      [`${titleLanguage}`]: {
         $regex: queryParameter,
         $options: "i",
       },
     },
-    "_id title.ua calories"
+    "_id title calories"
   ).exec();
+
   res.json({
     status: "success",
     code: 200,
