@@ -2,13 +2,13 @@ openapi: 3.0.0
 info:
   title: Slim Mom Server
   version: 1.0.0
-  description: Slim Mom Server for GOIT project
+  description: Slim Mom Server for GoIT group project
 servers:
   - url: http://localhost:3000/api
-    description: Development server
-  - url: https://slim-mom-dev.netlify.app/
-    description: remote dev sandbox
-  - url: https://slim-mom-server.herokuapp.com
+    description: Local development server
+  - url: https://slim-mom-dev.netlify.app/api
+    description: Remote development sandbox
+  - url: https://slim-mom-server.herokuapp.com/api
     description: Main production server
 
 tags:
@@ -22,6 +22,12 @@ tags:
     description: User routes for managing personal user diet
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     UserLogin:
       type: object
@@ -34,7 +40,11 @@ components:
           format: email
         password:
           type: string
+          format: password
           minimum: 8
+      example:
+        email: test@email.com
+        password: min8lengthpass
     UserRegister:
       type: object
       required:
@@ -51,6 +61,54 @@ components:
         name:
           type: string
           minimum: 3
+    DiaryProduct:
+      type: object
+      required:
+        - date
+        - productId
+        - amount
+      properties:
+        date:
+          type: string
+        productId:
+          type: string
+        amount:
+          type: number
+      example:
+        date: "123453535232"
+        productId: 5d51694802b2373622ff567f
+        amount: 1
+    DiaryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          default: Success
+        code:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+              date:
+                type: string
+              productId:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  title:
+                    type: object
+                    properties:
+                      ua:
+                        type: string
+                      en:
+                        type: string
+                  calories:
+                    type: number
 paths:
   /auth/login:
     post:
@@ -82,7 +140,40 @@ paths:
                       email:
                         type: string
                         format: email
-
+                      name:
+                        type: string
+                      params:
+                        type: object
+                        properties:
+                          height:
+                            type: string
+                            default: null
+                          age:
+                            type: string
+                            default: null
+                          currentWeight:
+                            type: string
+                            default: null
+                          bloodType:
+                            type: string
+                            default: null
+                          dailyCalorieIntake:
+                            type: string
+                            default: null
+                          language:
+                            type: string
+                            default: ua
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Email or password is wrong
   /auth/register:
     post:
       summary: a route to register a new user
@@ -111,12 +202,25 @@ paths:
                         format: email
                       name:
                         type: string
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Email in use
   /auth/logout:
-    post:
+    get:
       summary: a route to logout a user
       description: Attempt to logout already logined user by verifiyng his Token and then dropping it to null
       tags:
         - "Authentication"
+      security:
+        - bearerAuth: []
       responses:
         "204":
           description: OK
@@ -138,55 +242,511 @@ paths:
                   summary: Expired token
                   value:
                     message: Expired token
-
   /auth/refresh-token:
     post:
-      summary: a route to refresh an acess token for a logined user
+      summary: a route to refresh tokens
+      description: A route to generate new pair of Tokens by verifying provided refresh token
       tags:
         - "Authentication"
+      requestBody:
+        description: Example of a valid request body to refresh tokens
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refreshToken:
+                    type: string
+                  accessToken:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Invalid token
+        "401":
+          description: token expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Expired refresh token
   /auth/google:
     get:
-      summary: implimentation of a Google authorization
+      summary: Google authorization
       tags:
         - "Authentication"
-  /auth/google-redirect:
-    get:
-      summary: google-redirect feature
-      tags:
-        - "Authentication"
+      description: a route will redirect u to a Google Authorization page
+      responses:
+        "200":
+          description: OK
 
   /diary:
     post:
       summary: a route to add a products to a specific user diary
+      description: Adding specific product to a todays date diary
       tags:
         - "Diary"
-  /diary/:date:
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: example of a valid request body for adding a products to a diary
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/DiaryProduct"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DiaryResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: Not authorized
+
+  /diary/{date}:
     get:
       summary: a route to get an info about specific user todays diet
       tags:
         - "Diary"
-  /diary/delete/:id:
+      parameters:
+        - name: date
+          in: path
+          description: Unix date string
+          required: true
+          schema:
+            type: string
+            example: 123124151552
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DiaryResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: Not authorized
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+
+  /diary/{id}:
     delete:
-      summary: a route to delete diary info
+      summary: a route to delete product from diary
+      description: Deletes a product from a users diary by provided product ID and returns updated diary on success
       tags:
         - "Diary"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of a diary object
+          required: true
+          schema:
+            type: string
+            example: 62d718daa44d1bcc1e6cbd39
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DiaryResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: Not authorized
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: No data
+
   /products:
     get:
-      summary: a route for getting a product info by a quuery
+      summary: a route for getting a product info by a query
       tags:
         - "Products"
+      parameters:
+        - name: title
+          in: query
+          description: name of the searched product
+          required: true
+          schema:
+            type: string
+            example: potato
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: Success
+                  code:
+                    type: string
+                    default: 200
+                  data:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            title:
+                              type: object
+                              properties:
+                                ua:
+                                  type: string
+                                en:
+                                  type: string
+                            calories:
+                              type: number
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: Not authorized
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+
   /users/current-user:
     get:
       summary: a route for getting current users info
+      description: Return full info for a currently logined user
+
       tags:
         - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  height:
+                    type: string
+                  age:
+                    type: string
+                  currentWeight:
+                    type: string
+                  desiredWeight:
+                    type: string
+                  bloodType:
+                    type: string
+                  dailyCalorieIntake:
+                    type: string
+                  productsNotRecommended:
+                    type: array
+                    items:
+                      type: string
+                    default: []
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: Not authorized
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+
   /users/private/daily-calorie-intake:
     post:
-      summary: a route for managing private logined user diet info
+      summary: a route for geting private logined user diet info
       tags:
         - "User"
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Example of a valid request body to check for logined  User calories intake
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                height:
+                  type: number
+                  minimum: 100
+                age:
+                  type: number
+                  minimum: 18
+                currentWeight:
+                  type: number
+                  minimum: 20
+                desiredWeight:
+                  type: number
+                  minimum: 20
+                bloodType:
+                  type: number
+                  minimum: 1
+                  maximum: 4
+                language:
+                  type: string
+                  enum: [ua, en]
+              required:
+                - height
+                - age
+                - currentWeight
+                - desiredWeight
+                - bloodType
+                - language
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                      dailyCalorieIntake:
+                        type: number
+                      productsNotRecommended:
+                        type: array
+                        items:
+                          type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: Not authorized
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+
   /user/public/daily-calorie-intake:
     post:
-      summary: a route for managing unregistered public user diet info
+      summary: a route for geting unregistered public user diet info
       tags:
         - "User"
+      requestBody:
+        description: Example of a valid request body to check for logined  User calories intake
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                height:
+                  type: number
+                  minimum: 100
+                age:
+                  type: number
+                  minimum: 18
+                currentWeight:
+                  type: number
+                  minimum: 20
+                desiredWeight:
+                  type: number
+                  minimum: 20
+                bloodType:
+                  type: number
+                  minimum: 1
+                  maximum: 4
+                language:
+                  type: string
+                  enum: [ua, en]
+              required:
+                - height
+                - age
+                - currentWeight
+                - desiredWeight
+                - bloodType
+                - language
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                      dailyCalorieIntake:
+                        type: number
+                      productsNotRecommended:
+                        type: array
+                        items:
+                          type: string
+
+        "400":
+          description: Bad request, missing /field/
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: /field/ is required
