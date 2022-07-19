@@ -21,31 +21,33 @@ const login = async (req, res) => {
     await User.findByIdAndUpdate(user._id, { refreshToken });
 
     const {
-        name,
-        height,
-        age,
-        currentWeight,
-        desiredWeight,
-        bloodType,
-        dailyCalorieIntake,
-        language,
+      name,
+      height,
+      age,
+      currentWeight,
+      desiredWeight,
+      bloodType,
+      dailyCalorieIntake,
+      language,
+      createdAt,
     } = user;
     res.json({
-        refreshToken,
-        accessToken,
-        user: {
-            name,
-            email,
-            params: {
-                height,
-                age,
-                currentWeight,
-                desiredWeight,
-                bloodType,
-                dailyCalorieIntake,
-                language,
-            },
+      refreshToken,
+      accessToken,
+      user: {
+        name,
+        email,
+        params: {
+          height,
+          age,
+          currentWeight,
+          desiredWeight,
+          bloodType,
+          dailyCalorieIntake,
+          language,
+          createdAt,
         },
+      },
     });
 };
 
