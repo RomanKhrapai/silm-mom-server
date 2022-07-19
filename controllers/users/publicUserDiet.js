@@ -1,7 +1,7 @@
 const { Product } = require("../../models");
 
 const publicUserDiet = async (req, res) => {
-    const { height, age, currentWeight, desiredWeight, bloodType, language } =
+    const { height, age, currentWeight, desiredWeight, bloodType, language = "ua" } =
         req.body;
 
     const calculationDailyCalorieIntake =
