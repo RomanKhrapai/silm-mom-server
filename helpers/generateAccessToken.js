@@ -8,9 +8,8 @@ const generateAccessToken = (id) => {
   };
 
   return jwt.sign(payloadAccess, ACCESS_SECRET_KEY, {
-    expiresIn: "15s",
+    expiresIn: "15m",
   });
 };
 
 module.exports = generateAccessToken;
-

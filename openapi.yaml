@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.json
 openapi: 3.0.0
 info:
   title: Slim Mom Server
@@ -7,57 +6,168 @@ info:
 servers:
   - url: http://localhost:3000/api
     description: Development server
+  - url: https://slim-mom-dev.netlify.app/
+    description: remote dev sandbox
+  - url: https://slim-mom-server.herokuapp.com
+    description: Main production server
+
 tags:
   - name: Products
     description: Products routes for adding a new product or getting one
   - name: Authentication
     description: Authentication routes for login, logout, registration, and token management
   - name: Diary
-    description: Diary routes for managing personal everyday diet
+    description: Diary routes for managing everyday diet diery
+  - name: User
+    description: User routes for managing personal user diet
+
+components:
+  schemas:
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minimum: 8
+    UserRegister:
+      type: object
+      required:
+        - email
+        - name
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minimum: 8
+        name:
+          type: string
+          minimum: 3
 paths:
   /auth/login:
-    get:
-      summary: a route to login a registered user and generate a pair of refresh/access tokens
+    post:
+      summary: a route to login a registered user
+      description: Attempt to login already registered user by email and password, providing them a pair of refresh and access tokens on success
       tags:
         - "Authentication"
       requestBody:
+        description: Example of a valid request body to login a User
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: succesful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refreshToken:
+                    type: string
+                  accessToken:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        format: email
+
+  /auth/register:
+    post:
+      summary: a route to register a new user
+      description: Attempt to register a new user by email, name and password
+      tags:
+        - "Authentication"
+      requestBody:
+        description: Example of a valid request body to register a User
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                name:
-                  type: string
-              example:
-                id: asddf12123asdqwe
-                name: Oleh Solomka
+              "$ref": "#/components/schemas/UserRegister"
       responses:
-        "200":
-          description: OK
-  /auth/register:
-    post:
-      summary: a route to register a new user with provided name, email, and password
-      tags:
-        - "Authentication"
+        "201":
+          description: A simple string response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        format: email
+                      name:
+                        type: string
   /auth/logout:
     post:
-      summary: a route to logout a user, followed by dropping an existing refresh token
+      summary: a route to logout a user
+      description: Attempt to logout already logined user by verifiyng his Token and then dropping it to null
       tags:
         - "Authentication"
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: Invalid token
+                expired:
+                  summary: Expired token
+                  value:
+                    message: Expired token
+
   /auth/refresh-token:
     post:
       summary: a route to refresh an acess token for a logined user
       tags:
         - "Authentication"
+  /auth/google:
+    get:
+      summary: implimentation of a Google authorization
+      tags:
+        - "Authentication"
+  /auth/google-redirect:
+    get:
+      summary: google-redirect feature
+      tags:
+        - "Authentication"
+
   /diary:
+    post:
+      summary: a route to add a products to a specific user diary
+      tags:
+        - "Diary"
+  /diary/:date:
     get:
       summary: a route to get an info about specific user todays diet
       tags:
         - "Diary"
-    post:
-      summary: a route to add a products to a specific user diary
+  /diary/delete/:id:
+    delete:
+      summary: a route to delete diary info
       tags:
         - "Diary"
   /products:
@@ -65,7 +175,18 @@ paths:
       summary: a route for getting a product info by a quuery
       tags:
         - "Products"
-    post:
-      summary: a route to register a new product with all provided product info
+  /users/current-user:
+    get:
+      summary: a route for getting current users info
       tags:
-        - "Products"
+        - "User"
+  /users/private/daily-calorie-intake:
+    post:
+      summary: a route for managing private logined user diet info
+      tags:
+        - "User"
+  /user/public/daily-calorie-intake:
+    post:
+      summary: a route for managing unregistered public user diet info
+      tags:
+        - "User"

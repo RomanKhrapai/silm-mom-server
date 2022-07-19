@@ -29,6 +29,7 @@ const login = async (req, res) => {
         bloodType,
         dailyCalorieIntake,
         language,
+        createdAt,
     } = user;
     res.json({
         refreshToken,
@@ -44,6 +45,7 @@ const login = async (req, res) => {
                 bloodType,
                 dailyCalorieIntake,
                 language,
+                createdAt,
             },
         },
     });
