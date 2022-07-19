@@ -13,4 +13,3 @@ const generateAccessToken = (id) => {
 };
 
 module.exports = generateAccessToken;
-
