@@ -1,9 +1,9 @@
 const diaryAddProduct = require("./diaryAddProduct");
 const getDiaryProductsList = require("./getDiaryProductsList");
-const diaryDeleteProduct = require("./diaryDeleteProduct")
+const diaryDeleteProduct = require("./diaryDeleteProduct");
 
 module.exports = {
-  diaryAddProduct,
-  getDiaryProductsList,
-  diaryDeleteProduct,
+    diaryAddProduct,
+    getDiaryProductsList,
+    diaryDeleteProduct,
 };

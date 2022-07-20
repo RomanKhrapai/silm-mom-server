@@ -7,10 +7,10 @@ const { diaries: ctrl } = require("../../controllers");
 const router = express.Router();
 
 router.post(
-  "/",
-  auth,
-  validation(joiSchema),
-  ctrlWrapper(ctrl.diaryAddProduct)
+    "/",
+    auth,
+    validation(joiSchema),
+    ctrlWrapper(ctrl.diaryAddProduct)
 );
 
 router.get("/:date", auth, ctrlWrapper(ctrl.getDiaryProductsList));

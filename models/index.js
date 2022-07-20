@@ -3,7 +3,7 @@ const { User } = require("./user");
 const { Diary } = require("./diary");
 
 module.exports = {
-  Product,
-  User,
-  Diary,
+    Product,
+    User,
+    Diary,
 };
