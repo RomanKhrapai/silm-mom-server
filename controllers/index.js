@@ -3,7 +3,7 @@ const auth = require("./auth");
 const diaries = require("./diaries");
 
 module.exports = {
-  products,
-  auth,
-  diaries,
+    products,
+    auth,
+    diaries,
 };

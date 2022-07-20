@@ -21,6 +21,7 @@
         "mongoose": "^6.4.3",
         "morgan": "1.10.0",
         "path": "^0.12.7",
+        "yamljs": "^0.3.0",
         "query-string": "^7.1.1",
         "swagger-ui-express": "^4.4.0"
     },
